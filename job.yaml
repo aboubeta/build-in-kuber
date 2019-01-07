@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: ${JOB}
+spec:
+  template:
+    metadata:
+        name: ${JOB}
+    spec:
+      containers:
+      - name: docker-build
+        image: registry.gitlab.com/boube/build-in-kuber
+        env:
+        - name: REPO
+          value: ${REPO}
+        - name: IMAGE_URI
+          value: ${IMAGE_URI}
+        - name: REVISION
+          value: ${REVISION}
+        - name: DOCKERFILE
+          value: ${DOCKERFILE}
+        - name: BASE_DIR
+          value: ${BASE_DIR}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: ${AWS_SECRET}
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: ${AWS_SECRET}
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            secretKeyRef:
+              key: AWS_DEFAULT_REGION
+              name: ${AWS_SECRET}
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: docker-sock-volume
+        - mountPath: "/root/.ssh"
+          readOnly: true
+          name: ssh-git-secret
+      restartPolicy: Never
+      volumes:
+      - hostPath:
+          path: /var/run/docker.sock
+          type: File
+        name: docker-sock-volume
+      - name: ssh-git-secret
+        secret:
+          secretName: ssh-git-secret
+          items:
+          - key: id_rsa
+            path: id_rsa
+            mode: 0600
