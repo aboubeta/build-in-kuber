@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/bin/bash -x 
 
 [ $# -lt 2 -o $# -gt 8  ] && \
   echo "Usage: $0 REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET]" && exit 1
+
+JDIR="$(dirname $0)/"
+
 
 
 REPO="${1}"
@@ -45,9 +48,9 @@ done
 
 [ -z ${BASE_DIR} ] && \
   JOB="$(echo $(basename ${REPO} .git) | cut -c -63)" ||  \
-  JOB="$(echo $(basename ${REPO} .git)-${BASE_DIR}-${REVISION} | cut -c -63)"
+  JOB="$(echo $(basename ${REPO} .git)-$(echo ${BASE_DIR} | sed 's#/$##g')-${REVISION} | cut -c -63)"
 
-kubectl ${NAMESPACE} get job | grep "${JOB}" &>/dev/null && kubectl ${NAMESPACE} delete job ${JOB}
+#kubectl ${NAMESPACE} get job | grep "${JOB}" &>/dev/null && kubectl ${NAMESPACE} delete job ${JOB}
 
-template="$(cat job.yaml)"
+template="$(cat ${JDIR}job.yaml)"
 eval "echo \"${template}\"" | kubectl ${NAMESPACE} apply -f -
