@@ -1,4 +1,6 @@
-#!/bin/bash -x 
+#!/bin/bash
+
+[ -z ${DEBUG} ] || set +x
 
 [ $# -lt 2 -o $# -gt 8  ] && \
   echo "Usage: $0 REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET]" && exit 1
