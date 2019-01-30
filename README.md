@@ -1,5 +1,4 @@
-
-__ Create secrets __
+## Create secrets 
 
 * Needs secret ssh-git-secret with id_rsa key:
 
@@ -18,7 +17,7 @@ kubectl create secret generic aws-login \
 
 * Names are customizable, the defaults names are "ssh-git-secret" and "aws-login"
 
-__ Launch job __
+## Launch job
 
 ```
 ./create-job.sh REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET]
@@ -35,7 +34,7 @@ GIT_SECRET: SSH public key in Kubernetes
 AWS_SECRET: Amazon AWS credentials secret in Kubernetes
 ```
 
-___ Examples ___
+## Examples
 
 * Simple:
 
@@ -64,7 +63,7 @@ ___ Examples ___
   -as aws-login
 ```
 
-__ TODO __
+## TODO 
 
 * Job template: Optional AWS_SECRET
 * Tests
