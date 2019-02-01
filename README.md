@@ -20,10 +20,34 @@ kubectl create secret generic aws-login \
 ```
 
 
-#### Other registries (Docker Hub, Azure, Gitlab, ...)
+#### Docker Hub
 ```
-kubectl create secret generic docker-login   --from-literal=user=${DOCKER_USER} --from-literal=pass=${DOCKER_PASSWORD}
+kubectl create secret generic docker-login   --from-literal=user=${DOCKER_USER} --from-literal=pass=${DOCKER_PASSWORD} --from-literal=registry=https://index.docker.io/v1/
 ```
+
+#### Gitlab
+** Go to "User Settings > Access Tokens" and create a token with api permissions
+** Create secret:
+
+```
+kubectl create secret generic docker-login   --from-literal=user=${GITLAB_USER} --from-literal=pass=${TOKEN} --from-literal=registry=registry.gitlab.com
+```
+
+#### Azure 
+* Azure: 
+** Go to "Container registries" and select the registry. Go to access keys.
+** Create the secret with the data:
+
+```
+kubectl create secret generic docker-login   --from-literal=user=${USERNAME} --from-literal=pass=${PASSWORD} --from-literal=registry=${LOGIN_SERVER}
+```
+
+#### Other registries
+* If you use another registry:
+```
+kubectl create secret generic docker-login   --from-literal=user=${DOCKER_USER} --from-literal=pass=${DOCKER_PASSWORD} --from-literal=registry=${DOCKER_REGISTRY}
+```
+
 
 
 ## Launch job
@@ -40,7 +64,8 @@ BASE_DIR: Docker context directory
 DOCKERFILE: Dockerfile file path (relative to BASE_DIR)
 NAMESPACE: Kubernetes namespace where the job will run
 GIT_SECRET: SSH public key in Kubernetes
-AWS_SECRET: Amazon AWS credentials secret in Kubernetes
+AWS_SECRET: Amazon AWS credentials secret in Kubernetes 
+DOCKER_SECRET: User, pass and registry URL 
 ```
 
 ### Examples
@@ -70,13 +95,14 @@ AWS_SECRET: Amazon AWS credentials secret in Kubernetes
   -n ci-cd
   -gs ssh-git-secret
   -as aws-login
+  -ds docker-secret
 ```
 
 ## TODO 
 
-* Job template: Optional AWS_SECRET
-* Tests
-* CI/CD
-* Support other private registries (Azure, DockerHub, Gitlab )
+* Tests + Pod test
+* Job config file
+* No software-properties-common package on Dockerfile (space)
+* No show passwords
 
 Inspired on https://github.com/containerbuilding/cbi

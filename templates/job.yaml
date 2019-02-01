@@ -21,6 +21,8 @@ spec:
           value: ${DOCKERFILE}
         - name: BASE_DIR
           value: ${BASE_DIR}
+        ## AWS login
+        $(if [ ${AWS_SECRET} ] ; then echo "
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
@@ -35,7 +37,28 @@ spec:
           valueFrom:
             secretKeyRef:
               key: AWS_DEFAULT_REGION
-              name: ${AWS_SECRET}
+              name: ${AWS_SECRET}"
+        fi)
+        ## end
+        ## Other registries login
+        $(if [ ${DOCKER_SECRET} ] ; then echo "
+        - name: DOCKER_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: ${DOCKER_SECRET}
+        - name: DOCKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: pass
+              name: ${DOCKER_SECRET}
+        - name: DOCKER_REGISTRY
+          valueFrom:
+            secretKeyRef:
+              key: registry
+              name: ${DOCKER_SECRET}"
+        fi)
+        ## end
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /var/run/docker.sock
@@ -51,7 +74,7 @@ spec:
         name: docker-sock-volume
       - name: ssh-git-secret
         secret:
-          secretName: ssh-git-secret
+          secretName: ${GIT_SECRET}
           items:
           - key: id_rsa
             path: id_rsa

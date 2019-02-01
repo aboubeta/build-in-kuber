@@ -15,4 +15,5 @@ cd src/ && git checkout ${REVISION}
 ## Build
 docker build -t ${IMAGE_URI} -f ${DOCKERFILE} .
 [ -z ${AWS_ACCESS_KEY_ID} ] || $(aws ecr get-login | sed 's/\-e none//g' | sed 's/\r//g')
+[ -z ${DOCKER_USER} ] || docker login -u ${DOCKER_USER} -p"${DOCKER_PASSWORD}" ${DOCKER_REGISTRY}
 docker push ${IMAGE_URI}

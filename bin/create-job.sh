@@ -2,21 +2,22 @@
 
 [ -z ${DEBUG} ] || set +x
 
-[ $# -lt 2 -o $# -gt 8  ] && \
-  echo "Usage: $0 REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET]" && exit 1
-
-JDIR="$(dirname $0)/"
 
 
+JDIR="$(dirname $0)/../templates"
 
 REPO="${1}"
 IMAGE_URI="${2}"
 shift; shift
 
+
+[ -z  ${REPO} -o -z ${IMAGE_URI}  ] && \
+  echo "Usage: $0 REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET] [-ds DOCKER_SECRET]" && exit 1
+
 REVISION="master"
 DOCKERFILE="Dockerfile"
-AWS_SECRET="aws-login"
-GIT_SECRET="ssh-git-secret"
+
+unset BASE_DIR NAMESPACE  GIT_SECRET AWS_SECRET DOCKER_SECRET
 
 while [[ $# -gt 0 ]]
 do
@@ -45,8 +46,14 @@ do
     AWS_SECRET="${2}"
     shift; shift
     ;;
+    -ds)
+    DOCKER_SECRET="${2}"
+    shift; shift
+    ;;
   esac
 done
+
+
 
 [ -z ${BASE_DIR} ] && \
   JOB="$(echo $(basename ${REPO} .git) | cut -c -63)" ||  \
@@ -54,5 +61,8 @@ done
 
 #kubectl ${NAMESPACE} get job | grep "${JOB}" &>/dev/null && kubectl ${NAMESPACE} delete job ${JOB}
 
-template="$(cat ${JDIR}job.yaml)"
+template="$(cat ${JDIR}/job.yaml)"
 eval "echo \"${template}\"" | kubectl ${NAMESPACE} apply -f -
+
+#template="$(cat ${JDIR}pod.yaml)"
+#eval "echo \"${template}\"" 
