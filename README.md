@@ -29,7 +29,7 @@ kubectl create secret generic docker-login   --from-literal=user=${DOCKER_USER} 
 ## Launch job
 
 ```
-./create-job.sh REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET]
+./create-job.sh REPO IMAGE_URI [ -r REVISION] [-b BASE_DIR] [-d DOCKERFILE] [-n NAMESPACE] [-gs GIT_SECRET] [-as AWS_SECRET] [-ds DOCKER_SECRET]
 ```
 
 ```
