@@ -1,11 +1,15 @@
-## Create secrets 
+## Setup 
+### Git private repo
 
-* Needs secret ssh-git-secret with id_rsa key:
+* Add the public key to you app repo
+* Create secret ssh-git-secret with you privat key:
 
 ```
 kubectl create secret generic ssh-git-secret --from-file=id_rsa=ssh_priv_key
 ```
 
+### Private registry
+#### AWS ECR
 * If you use AWS ECR registry, you need aws-login with AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION keys:
 
 ```
@@ -15,7 +19,12 @@ kubectl create secret generic aws-login \
   --from-literal=AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 ```
 
-* Names are customizable, the defaults names are "ssh-git-secret" and "aws-login"
+
+#### Other registries (Docker Hub, Azure, Gitlab, ...)
+```
+kubectl create secret generic docker-login   --from-literal=user=${DOCKER_USER} --from-literal=pass=${DOCKER_PASSWORD}
+```
+
 
 ## Launch job
 
@@ -34,7 +43,7 @@ GIT_SECRET: SSH public key in Kubernetes
 AWS_SECRET: Amazon AWS credentials secret in Kubernetes
 ```
 
-## Examples
+### Examples
 
 * Simple:
 
