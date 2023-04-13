@@ -106,3 +106,5 @@ DOCKER_SECRET: User, pass and registry URL
 * No show passwords
 
 Inspired on https://github.com/containerbuilding/cbi
+
+### TEST
